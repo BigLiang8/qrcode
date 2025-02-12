@@ -904,9 +904,10 @@
         return /MicroMessenger/i.test(navigator.userAgent);
     }
 
-    // 页面加载时更新提示文字
+    // 页面加载时更新提示文字和二维码图片
     window.addEventListener('load', function() {
         const qrHint = document.querySelector('.qrcode-hint');
+        const qrImg = document.getElementById('wechatQr');
         
         if (!isMobile()) {
             qrHint.textContent = '请使用手机微信扫描二维码关注公众号';
@@ -914,6 +915,8 @@
             qrHint.textContent = '请使用微信扫描二维码关注';
         } else {
             qrHint.textContent = '长按二维码关注公众号';
+            // 在微信内使用不同的二维码图片
+            qrImg.src = 'qrcode_liang1.png';
         }
     });
 
