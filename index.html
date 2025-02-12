@@ -180,6 +180,24 @@
             border-radius: 12px;
         }
 
+        .qrcode-hint {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .qrcode:hover .qrcode-hint {
+            opacity: 1;
+        }
+
         .features {
             margin-top: 30px;
             display: grid;
@@ -259,6 +277,13 @@
             .qrcode {
                 width: 240px;
                 height: 240px;
+            }
+
+            .qrcode-hint {
+                display: block;
+                opacity: 1;
+                bottom: -25px;
+                font-size: 12px;
             }
         }
 
@@ -803,8 +828,34 @@
         <h2 class="subtitle">关注我们，开启技术新视界</h2>
         
         <div class="qrcode">
-            <img src="qrcode_liang.jpg" alt="公众号二维码">
+            <img src="qrcode_liang.jpg" alt="公众号二维码" id="wechatQr">
+            <div class="qrcode-hint">长按识别二维码</div>
         </div>
     </div>
+
+    <script>
+    // 添加长按识别处理
+    let pressTimer;
+    const qrImg = document.getElementById('wechatQr');
+
+    qrImg.addEventListener('touchstart', function(e) {
+        pressTimer = setTimeout(() => {
+            // 触发微信识别
+            window.location.href = 'weixin://scanqrcode';
+        }, 800); // 长按800毫秒触发
+        e.preventDefault();
+    });
+
+    qrImg.addEventListener('touchend', function(e) {
+        clearTimeout(pressTimer);
+        e.preventDefault();
+    });
+
+    // 桌面端右键提示
+    qrImg.oncontextmenu = function(e) {
+        e.preventDefault();
+        alert('请使用微信扫一扫识别二维码');
+    };
+    </script>
 </body>
 </html>
