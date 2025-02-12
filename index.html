@@ -924,11 +924,12 @@
 
         qrImg.addEventListener('touchstart', function(e) {
             pressTimer = setTimeout(() => {
-                // 修改跳转方式
-                window.location.href = 'weixin://dl/officialaccounts/profile/gh_d86eed04ee36';
-                // 备用跳转方式
+                // 使用更可靠的跳转方式
+                window.location.href = 'https://mp.weixin.qq.com/s/gh_d86eed04ee36';
+                
+                // 如果上面的不行，可以尝试这个
                 setTimeout(() => {
-                    window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=gh_d86eed04ee36';
+                    window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&scene=110&__biz=gh_d86eed04ee36#wechat_redirect';
                 }, 100);
             }, 800);
             e.preventDefault();
