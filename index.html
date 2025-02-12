@@ -136,66 +136,35 @@
         }
 
         .qrcode {
-            width: 280px;
-            height: 280px;
-            margin: 0 auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 
-                0 10px 30px rgba(0, 255, 255, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
-        }
-
-        .qrcode::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 100%
-            );
-            animation: shine 3s infinite;
-        }
-
-        .qrcode:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 
-                0 15px 40px rgba(0, 255, 255, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.2);
+            margin: 30px auto;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .qrcode img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
             border-radius: 12px;
         }
 
         .qrcode-hint {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 14px;
-            background: rgba(0,0,0,0.7);
-            padding: 5px 15px;
-            border-radius: 20px;
-            opacity: 0;
-            transition: opacity 0.3s;
+            position: static;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-weight: normal;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            animation: fadeIn 0.3s ease-out;
+            white-space: nowrap;
         }
 
-        .qrcode:hover .qrcode-hint {
-            opacity: 1;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .features {
@@ -566,6 +535,98 @@
                 opacity: 0;
             }
         }
+
+        /* 添加PC端扫码提示样式 */
+        .qr-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .qr-tip-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .qr-tip-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #00ff9d;
+        }
+
+        .qr-tip-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* PC端悬浮效果 */
+        .qrcode:hover .qr-overlay {
+            opacity: 1;
+        }
+
+        /* 添加全局提示样式 */
+        .tip-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tip-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 80%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .tip-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .tip-content p {
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tip-box.closing {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -829,33 +890,50 @@
         
         <div class="qrcode">
             <img src="qrcode_liang.jpg" alt="公众号二维码" id="wechatQr">
-            <div class="qrcode-hint">长按识别二维码</div>
+            <h3 class="qrcode-hint">长按关注公众号</h3>
         </div>
     </div>
 
     <script>
-    // 添加长按识别处理
-    let pressTimer;
-    const qrImg = document.getElementById('wechatQr');
+    // 添加设备和浏览器检测
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
-    qrImg.addEventListener('touchstart', function(e) {
-        pressTimer = setTimeout(() => {
-            // 触发微信识别
-            window.location.href = 'weixin://scanqrcode';
-        }, 800); // 长按800毫秒触发
-        e.preventDefault();
+    function isWeixinBrowser() {
+        return /MicroMessenger/i.test(navigator.userAgent);
+    }
+
+    // 页面加载时更新提示文字
+    window.addEventListener('load', function() {
+        const qrHint = document.querySelector('.qrcode-hint');
+        
+        if (!isMobile()) {
+            qrHint.textContent = '请使用手机微信扫描二维码关注公众号';
+        } else if (!isWeixinBrowser()) {
+            qrHint.textContent = '请使用微信扫描二维码关注';
+        } else {
+            qrHint.textContent = '长按二维码关注公众号';
+        }
     });
 
-    qrImg.addEventListener('touchend', function(e) {
-        clearTimeout(pressTimer);
-        e.preventDefault();
-    });
+    // 在微信内的长按处理
+    if (isMobile() && isWeixinBrowser()) {
+        const qrImg = document.getElementById('wechatQr');
+        let pressTimer;
 
-    // 桌面端右键提示
-    qrImg.oncontextmenu = function(e) {
-        e.preventDefault();
-        alert('请使用微信扫一扫识别二维码');
-    };
+        qrImg.addEventListener('touchstart', function(e) {
+            pressTimer = setTimeout(() => {
+                window.location.href = 'weixin://dl/business/?t=DL/officialacc&action=follow&username=gh_d86eed04ee36';
+            }, 800);
+            e.preventDefault();
+        });
+
+        qrImg.addEventListener('touchend', function(e) {
+            clearTimeout(pressTimer);
+            e.preventDefault();
+        });
+    }
     </script>
 </body>
 </html>
