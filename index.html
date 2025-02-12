@@ -904,10 +904,9 @@
         return /MicroMessenger/i.test(navigator.userAgent);
     }
 
-    // 页面加载时更新提示文字和二维码图片
+    // 页面加载时更新提示文字
     window.addEventListener('load', function() {
         const qrHint = document.querySelector('.qrcode-hint');
-        const qrImg = document.getElementById('wechatQr');
         
         if (!isMobile()) {
             qrHint.textContent = '请使用手机微信扫描二维码关注公众号';
@@ -915,8 +914,6 @@
             qrHint.textContent = '请使用微信扫描二维码关注';
         } else {
             qrHint.textContent = '长按二维码关注公众号';
-            // 在微信内使用不同的二维码图片
-            qrImg.src = 'qrcode_liang1.png';
         }
     });
 
@@ -927,13 +924,15 @@
 
         qrImg.addEventListener('touchstart', function(e) {
             pressTimer = setTimeout(() => {
-                // 使用微信公众号搜索链接
-                window.location.href = 'weixin://dl/search?keyword=硅基AI';
+                // 直接使用微信的扫一扫功能
+                window.location.href = 'weixin://scanqrcode';
                 
-                // 备用跳转
+                // 如果扫一扫不成功，尝试搜索
                 setTimeout(() => {
-                    window.location.href = 'https://weixin.qq.com/r/gh_d86eed04ee36';
-                }, 100);
+                    // 使用 Base64 编码的公众号 ID 来避免特殊字符问题
+                    const bizId = btoa('gh_d86eed04ee36');
+                    window.location.href = `weixin://dl/business/?t=DL/officialacc&action=follow&biz=${bizId}`;
+                }, 500);
             }, 800);
             e.preventDefault();
         });
