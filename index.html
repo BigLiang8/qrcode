@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关注公众号</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background: #0a0a1f;
+        }
+
+        .tech-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 20s linear infinite;
+            transform: rotate(45deg);
+            top: -50%;
+            left: -50%;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at center, #fff 0.1px, transparent 0.5px);
+            background-size: 30px 30px;
+            animation: particleFloat 15s infinite linear;
+            opacity: 0.3;
+        }
+
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+        }
+
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 255, 255, 0.3);
+            top: -100px;
+            left: -100px;
+            animation: floatCircle 15s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 0, 255, 0.2);
+            bottom: -150px;
+            right: -150px;
+            animation: floatCircle 20s ease-in-out infinite reverse;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(0, 255, 255, 0.1) 50%,
+                transparent 100%);
+            animation: scanMove 3s ease-in-out infinite;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+            width: 85%;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(
+                90deg,
+                #00ffff,
+                #ff00ff,
+                #00ffff,
+                #ff00ff
+            );
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: gradientMove 8s linear infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+        }
+
+        .qrcode {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 
+                0 10px 30px rgba(0, 255, 255, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qrcode::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 100%
+            );
+            animation: shine 3s infinite;
+        }
+
+        .qrcode:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0 15px 40px rgba(0, 255, 255, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .qrcode img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .features {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .feature-item {
+            color: #4b5563;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .tips {
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotate(45deg) translate(0, 0); }
+            100% { transform: rotate(45deg) translate(-40px, -40px); }
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-30px); }
+        }
+
+        @keyframes floatCircle {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 20px); }
+        }
+
+        @keyframes scanMove {
+            0%, 100% { transform: translateY(-100%); }
+            50% { transform: translateY(100%); }
+        }
+
+        @keyframes shine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 150% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                max-width: 400px;
+                padding: 30px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .qrcode {
+                width: 240px;
+                height: 240px;
+            }
+        }
+
+        /* 修改数字雨效果 */
+        .matrix-column {
+            position: absolute;
+            top: -20%;
+            font-family: 'Courier New', monospace;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1.2;
+            white-space: nowrap;
+            animation: rain linear forwards;
+            pointer-events: none;
+        }
+
+        .matrix-column span {
+            display: block;
+            color: #00ffff;
+            text-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.9),
+                0 0 20px rgba(0, 255, 255, 0.7),
+                0 0 30px rgba(0, 255, 255, 0.5);
+            animation: glowText 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowText {
+            0% {
+                opacity: 0.7;
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 1;
+                filter: brightness(1.5);
+            }
+        }
+
+        @keyframes rain {
+            0% {
+                transform: translateY(-100%);
+                opacity: 1;
+            }
+            95% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* 添加更多浮动元素 */
+        .tech-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, 
+                rgba(0, 255, 255, 0.8) 0%,
+                rgba(0, 255, 255, 0.3) 50%,
+                transparent 100%);
+            border-radius: 50%;
+            animation: particleFloat linear infinite;
+        }
+
+        /* 增加更多粒子 */
+        .particle:nth-child(1) { width: 4px; height: 4px; top: 20%; left: 15%; animation-duration: 6s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; top: 40%; left: 25%; animation-duration: 8s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; top: 60%; left: 45%; animation-duration: 7s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; top: 30%; left: 65%; animation-duration: 9s; }
+        .particle:nth-child(5) { width: 4px; height: 4px; top: 70%; left: 85%; animation-duration: 5s; }
+        .particle:nth-child(6) { width: 5px; height: 5px; top: 25%; left: 35%; animation-duration: 7.5s; }
+        .particle:nth-child(7) { width: 3px; height: 3px; top: 45%; left: 75%; animation-duration: 6.5s; }
+        .particle:nth-child(8) { width: 6px; height: 6px; top: 65%; left: 55%; animation-duration: 8.5s; }
+        .particle:nth-child(9) { width: 4px; height: 4px; top: 15%; left: 90%; animation-duration: 7.2s; }
+        .particle:nth-child(10) { width: 5px; height: 5px; top: 80%; left: 40%; animation-duration: 6.8s; }
+        .particle:nth-child(11) { width: 4px; height: 4px; top: 35%; left: 80%; animation-duration: 7.8s; }
+        .particle:nth-child(12) { width: 3px; height: 3px; top: 55%; left: 20%; animation-duration: 8.2s; }
+
+        /* 修改金元宝爆炸效果 */
+        .yuanbao-explosion {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .explosion-point {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+        }
+
+        .yuanbao {
+            position: absolute;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(135deg, 
+                #ffd700 0%, 
+                #fff3b0 25%,
+                #ffd700 50%,
+                #ffb700 75%,
+                #ffd700 100%);
+            border-radius: 50% 50% 5px 5px;
+            transform-style: preserve-3d;
+            animation: yuanbaoExplosion 2s ease-out;
+            box-shadow: 
+                0 0 15px #ffd700,
+                0 0 30px rgba(255, 215, 0, 0.5);
+            transform-origin: bottom center;
+            perspective: 1000px;
+        }
+
+        .yuanbao::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(135deg, 
+                #ffb300 0%, 
+                #ffd700 50%, 
+                #ffb300 100%);
+            transform: rotateX(70deg);
+            transform-origin: bottom;
+            border-radius: 0 0 40% 40%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .yuanbao::after {
+            content: '财';
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #8b4513;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+
+        @keyframes yuanbaoExplosion {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(0) rotateX(0deg);
+                opacity: 1;
+            }
+            20% {
+                transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1) rotateX(30deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1) rotateX(0deg);
+                opacity: 0;
+            }
+        }
+
+        /* 金元宝闪光效果 */
+        .yuanbao-sparkle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, 
+                rgba(255, 215, 0, 0.8) 0%,
+                transparent 70%);
+            opacity: 0;
+            animation: sparkle 0.8s ease-out;
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* 添加动态连线效果 */
+        .connection-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            animation: lineMove 3s linear infinite;
+        }
+
+        .line-1 {
+            top: 25%;
+            left: 0;
+            width: 100%;
+        }
+
+        .line-2 {
+            top: 75%;
+            left: 0;
+            width: 100%;
+            animation-delay: -1.5s;
+        }
+
+        @keyframes lineMove {
+            0% {
+                background-position: -100% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* 在 body 标签内添加新的元素 */
+        .tech-background {
+            /* 添加新的背景元素 */
+            .matrix-rain::before {
+                content: "010101";
+                left: 10%;
+            }
+            .matrix-rain::after {
+                content: "101010";
+                left: 90%;
+            }
+        }
+
+        /* 添加流星效果 */
+        .meteor-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .meteor {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(0, 255, 255, 0.5) 50%,
+                transparent);
+            transform: rotate(-45deg);
+            filter: drop-shadow(0 0 5px #00ffff);
+            animation: meteorMove 1.5s linear;
+            opacity: 0;
+        }
+
+        .meteor::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 10px #00ffff;
+            left: 0;
+            top: -1px;
+        }
+
+        @keyframes meteorMove {
+            0% {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(200px, 200px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tech-background">
+        <div class="grid"></div>
+        <div class="particles"></div>
+        <div class="scan-line"></div>
+        <div class="glow-circle circle-1"></div>
+        <div class="glow-circle circle-2"></div>
+        <div class="matrix-rain">
+            <script>
+                function createMatrixRain() {
+                    const matrixRain = document.querySelector('.matrix-rain');
+                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    const maxColumns = 12; // 最大同时存在的列数
+                    
+                    function createColumn() {
+                        const column = document.createElement('div');
+                        column.className = 'matrix-column';
+                        
+                        // 随机位置
+                        column.style.left = `${Math.random() * 100}%`;
+                        // 随机下落速度
+                        column.style.animationDuration = `${1 + Math.random() * 0.5}s`;
+                        
+                        // 减少每列字符数到8个
+                        for(let j = 0; j < 8; j++) {
+                            const span = document.createElement('span');
+                            span.textContent = characters[Math.floor(Math.random() * characters.length)];
+                            column.appendChild(span);
+                        }
+                        
+                        matrixRain.appendChild(column);
+                        
+                        // 动画结束后移除列
+                        column.addEventListener('animationend', () => {
+                            column.remove();
+                        });
+                    }
+                    
+                    // 定期创建新列
+                    setInterval(() => {
+                        if (matrixRain.children.length < maxColumns) {
+                            createColumn();
+                        }
+                    }, 200); // 每200ms尝试创建新列
+                    
+                    // 字符变化效果
+                    setInterval(() => {
+                        const spans = document.querySelectorAll('.matrix-column span');
+                        spans.forEach(span => {
+                            if (Math.random() > 0.9) { // 10%的概率改变字符
+                                span.textContent = characters[Math.floor(Math.random() * characters.length)];
+                            }
+                        });
+                    }, 100);
+                }
+                
+                window.addEventListener('load', createMatrixRain);
+            </script>
+        </div>
+        <div class="tech-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="geometric-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="energy-pulse">
+            <script>
+                function createPulse() {
+                    const pulseContainer = document.querySelector('.energy-pulse');
+                    const maxPulses = 15; // 最大同时存在的脉冲数
+                    
+                    function addPulse() {
+                        // 随机位置
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        
+                        const pulse = document.createElement('div');
+                        pulse.className = 'pulse';
+                        pulse.style.left = `${x}px`;
+                        pulse.style.top = `${y}px`;
+                        
+                        // 随机颜色
+                        const colors = [
+                            'rgba(0, 255, 255, 0.2)',  // 青色
+                            'rgba(255, 0, 255, 0.2)',  // 品红
+                            'rgba(0, 255, 0, 0.2)'     // 绿色
+                        ];
+                        pulse.style.borderColor = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        pulseContainer.appendChild(pulse);
+                        
+                        // 动画结束后移除元素
+                        setTimeout(() => {
+                            pulse.remove();
+                        }, 3000);
+                    }
+                    
+                    // 定期添加新的脉冲
+                    setInterval(() => {
+                        if (pulseContainer.children.length < maxPulses) {
+                            addPulse();
+                        }
+                    }, 300); // 每300ms尝试添加一个新脉冲
+                }
+                
+                // 页面加载完成后开始创建脉冲效果
+                window.addEventListener('load', createPulse);
+            </script>
+        </div>
+        <div class="connection-lines">
+            <div class="line line-1"></div>
+            <div class="line line-2"></div>
+        </div>
+        <div class="yuanbao-explosion">
+            <script>
+                function createYuanbaoExplosion() {
+                    const container = document.querySelector('.yuanbao-explosion');
+                    const explosionPoints = [];
+                    const numPoints = 8; // 增加爆炸点数量从5个到8个
+                    
+                    // 创建固定的爆炸点
+                    for(let i = 0; i < numPoints; i++) {
+                        const point = document.createElement('div');
+                        point.className = 'explosion-point';
+                        
+                        // 扩大随机位置范围
+                        const x = Math.random() * (window.innerWidth - 100);
+                        const y = Math.random() * (window.innerHeight - 100);
+                        
+                        point.style.left = `${x}px`;
+                        point.style.top = `${y}px`;
+                        
+                        container.appendChild(point);
+                        explosionPoints.push(point);
+                    }
+                    
+                    function explodeYuanbao(point) {
+                        const sparkle = document.createElement('div');
+                        sparkle.className = 'yuanbao-sparkle';
+                        point.appendChild(sparkle);
+                        
+                        // 增加金元宝数量
+                        const yuanbaoCount = 10 + Math.floor(Math.random() * 6); // 随机10-15个金元宝
+                        
+                        for(let i = 0; i < yuanbaoCount; i++) {
+                            const yuanbao = document.createElement('div');
+                            yuanbao.className = 'yuanbao';
+                            
+                            // 扩大运动范围
+                            const angle = (Math.random() * Math.PI * 2);
+                            const velocity = 150 + Math.random() * 200; // 增加速度范围
+                            const tx = Math.cos(angle) * velocity;
+                            const ty = Math.sin(angle) * velocity - 150; // 增加垂直方向的运动范围
+                            const rotation = Math.random() * 720 - 360; // 增加旋转角度范围
+                            
+                            yuanbao.style.setProperty('--tx', `${tx}px`);
+                            yuanbao.style.setProperty('--ty', `${ty}px`);
+                            yuanbao.style.setProperty('--rot', `${rotation}deg`);
+                            
+                            point.appendChild(yuanbao);
+                            
+                            yuanbao.addEventListener('animationend', () => {
+                                yuanbao.remove();
+                            });
+                        }
+                        
+                        setTimeout(() => {
+                            sparkle.remove();
+                        }, 800);
+                    }
+                    
+                    // 随机触发爆炸效果
+                    function randomExplosion() {
+                        // 随机触发1-3个爆炸点
+                        const numExplosions = 1 + Math.floor(Math.random() * 3);
+                        for(let i = 0; i < numExplosions; i++) {
+                            const point = explosionPoints[Math.floor(Math.random() * explosionPoints.length)];
+                            explodeYuanbao(point);
+                        }
+                    }
+                    
+                    // 加快触发频率
+                    setInterval(randomExplosion, 800); // 从1000ms改为800ms
+                    
+                    // 更频繁地更新爆炸点位置
+                    setInterval(() => {
+                        explosionPoints.forEach(point => {
+                            const x = Math.random() * (window.innerWidth - 100);
+                            const y = Math.random() * (window.innerHeight - 100);
+                            point.style.left = `${x}px`;
+                            point.style.top = `${y}px`;
+                        });
+                    }, 15000); // 从30000ms改为15000ms
+                }
+                
+                window.addEventListener('load', createYuanbaoExplosion);
+            </script>
+        </div>
+        <div class="meteor-container">
+            <script>
+                function createMeteor() {
+                    const container = document.querySelector('.meteor-container');
+                    
+                    function addMeteor() {
+                        const meteor = document.createElement('div');
+                        meteor.className = 'meteor';
+                        
+                        // 随机起始位置
+                        const startX = Math.random() * window.innerWidth - 200;
+                        const startY = -100;
+                        meteor.style.left = `${startX}px`;
+                        meteor.style.top = `${startY}px`;
+                        
+                        // 随机大小和速度
+                        const scale = 0.5 + Math.random() * 1.5;
+                        const duration = 1 + Math.random();
+                        meteor.style.transform = `scale(${scale})`;
+                        meteor.style.animationDuration = `${duration}s`;
+                        
+                        container.appendChild(meteor);
+                        
+                        // 动画结束后移除
+                        meteor.addEventListener('animationend', () => {
+                            meteor.remove();
+                        });
+                    }
+                    
+                    // 随机间隔创建流星
+                    function randomMeteor() {
+                        const delay = 2000 + Math.random() * 3000; // 2-5秒随机间隔
+                        addMeteor();
+                        setTimeout(randomMeteor, delay);
+                    }
+                    
+                    randomMeteor();
+                }
+                
+                window.addEventListener('load', createMeteor);
+            </script>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="title">技术赋能未来</h1>
+        <h2 class="subtitle">关注我们，开启技术新视界</h2>
+        
+        <div class="qrcode">
+            <img src="qrcode_liang.jpg" alt="公众号二维码">
+        </div>
+    </div>
+</body>
+</html>
