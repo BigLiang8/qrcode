@@ -924,12 +924,12 @@
 
         qrImg.addEventListener('touchstart', function(e) {
             pressTimer = setTimeout(() => {
-                // 使用更可靠的跳转方式
-                window.location.href = 'https://mp.weixin.qq.com/s/gh_d86eed04ee36';
+                // 使用微信公众号搜索链接
+                window.location.href = 'weixin://dl/search?keyword=硅基AI';
                 
-                // 如果上面的不行，可以尝试这个
+                // 备用跳转
                 setTimeout(() => {
-                    window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&scene=110&__biz=gh_d86eed04ee36#wechat_redirect';
+                    window.location.href = 'https://weixin.qq.com/r/gh_d86eed04ee36';
                 }, 100);
             }, 800);
             e.preventDefault();
