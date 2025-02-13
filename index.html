@@ -924,15 +924,13 @@
 
         qrImg.addEventListener('touchstart', function(e) {
             pressTimer = setTimeout(() => {
-                // 直接使用微信的扫一扫功能
-                window.location.href = 'weixin://scanqrcode';
+                // 使用微信公众号搜索链接
+                window.location.href = 'weixin://dl/search?keyword=硅基AI';
                 
-                // 如果扫一扫不成功，尝试搜索
+                // 备用跳转方式
                 setTimeout(() => {
-                    // 使用 Base64 编码的公众号 ID 来避免特殊字符问题
-                    const bizId = btoa('gh_d86eed04ee36');
-                    window.location.href = `weixin://dl/business/?t=DL/officialacc&action=follow&biz=${bizId}`;
-                }, 500);
+                    window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzU5NjA3MzgyMA==#wechat_redirect';
+                }, 100);
             }, 800);
             e.preventDefault();
         });
