@@ -925,12 +925,8 @@
         qrImg.addEventListener('touchstart', function(e) {
             pressTimer = setTimeout(() => {
                 // 使用原始ID直接跳转关注
-                window.location.href = 'weixin://dl/officialaccounts/profile/gh_d86eed04ee36';
+                window.location.href = 'weixin://dl/business/?t=DL/officialacc&action=follow&username=硅基AI';
                 
-                // 备用跳转方式
-                setTimeout(() => {
-                    window.location.href = 'weixin://dl/business/?t=DL/officialacc&action=follow&username=gh_d86eed04ee36';
-                }, 100);
             }, 800);
             e.preventDefault();
         });
