@@ -890,7 +890,7 @@
         
         <div class="qrcode">
             <img src="qrcode_liang.jpg" alt="公众号二维码" id="wechatQr">
-            <h3 class="qrcode-hint">长按关注公众号</h3>
+            <h3 class="qrcode-hint">请扫描二维码关注公众号</h3>
         </div>
     </div>
 
@@ -913,29 +913,16 @@
         } else if (!isWeixinBrowser()) {
             qrHint.textContent = '请使用微信扫描二维码关注';
         } else {
-            qrHint.textContent = '长按二维码关注公众号';
+            qrHint.textContent = '请扫描二维码关注公众号';
         }
     });
 
-    // 在微信内的长按处理
-    if (isMobile() && isWeixinBrowser()) {
-        const qrImg = document.getElementById('wechatQr');
-        let pressTimer;
-
-        qrImg.addEventListener('touchstart', function(e) {
-            pressTimer = setTimeout(() => {
-                // 使用原始ID直接跳转关注
-                window.location.href = 'weixin://dl/business/?t=DL/officialacc&action=follow&username=GJAI001';
-                
-            }, 800);
-            e.preventDefault();
-        });
-
-        qrImg.addEventListener('touchend', function(e) {
-            clearTimeout(pressTimer);
-            e.preventDefault();
-        });
-    }
+    // 移除长按跳转相关代码
+    const qrImg = document.getElementById('wechatQr');
+    qrImg.addEventListener('touchstart', function(e) {
+        // 防止默认行为
+        e.preventDefault();
+    });
     </script>
 </body>
 </html>
